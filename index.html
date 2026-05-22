@@ -574,9 +574,8 @@ function clearAlerts(){$('errBox').style.display='none';$('warnBox').style.displ
 
 // ── Main generate ──────────────────────────────────────────────────────────
 async function generate(){
-  const src=$('src').value,imgKey=$('imgKey').value.trim(),q=$('query').value.trim();
-  const gemKey=$('geminiKey').value.trim(),n=parseInt($('count').value);
-  const tone=$('tone').value,lang=$('lang').value,theme=$('theme').value.trim();
+  const src=$('src').value,imgKey=($('imgKey')||{value:''}).value.trim(),q=$('query').value.trim();
+  const n=parseInt($('count').value);
   if(src!=='picsum'&&!imgKey){showError('Missing Image Key','Add your '+src+' API key above, or switch to Picsum (no key needed).');return;}
   if(!q){showError('Missing Keyword','Enter a photo search keyword.');return;}
   const opts={overlayOp:$('overlayOp').value/100,textColor:$('textColor').value,textPos:$('textPos').value,fontStyle:$('fontStyle').value,logo:logoData,logoPos:$('logoPos').value,logoSize:parseInt($('logoSize').value)};
