@@ -107,41 +107,21 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
     <p class="tip" id="imgTip">Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval, no credit card.</p>
   </div>
 
-  <!-- AI TEXT -->
+  <!-- MESSAGES -->
   <div class="card">
-    <div class="ct">✨ AI Text — OpenRouter</div>
-    <div class="f" style="margin-bottom:12px"><label>OpenRouter API Key</label>
-      <div class="kr">
-        <input type="password" id="geminiKey" value="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" placeholder="Paste your OpenRouter API key..."/>
-        <button class="btn btn-s" onclick="testGeminiKey()">Test</button>
-      </div>
-      <div id="geminiKeyStatus" style="display:none;font-size:12px;margin-top:5px"></div>
-    </div>
-    <div class="ibox" style="margin-bottom:12px">
-      <b>Free OpenRouter key →</b> <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> — sign in with Google, create key, done. No credit card.<br>
-      Leave blank to use the built-in message bank instead.
-    </div>
-    <div class="g2" style="margin-bottom:12px">
-      <div class="f"><label>Language</label>
-        <select id="lang">
-          <option value="en">English</option>
-          <option value="es">Spanish</option>
-          <option value="mix">Mix (EN + ES)</option>
-        </select>
-      </div>
-      <div class="f"><label>Tone</label>
-        <select id="tone">
-          <option value="motivational">Motivational 🔥</option>
-          <option value="peaceful">Peaceful & Calm 🌿</option>
-          <option value="faith">Faith & Spiritual 🙏</option>
-          <option value="hustle">Hustle & Grind 💼</option>
-          <option value="self-love">Self-Love 💜</option>
-          <option value="gratitude">Gratitude 🌟</option>
-        </select>
+    <div class="ct">✨ Messages</div>
+    <div id="jsonZone" class="logo-zone" onclick="$('jsonFile').click()" style="margin-bottom:10px">
+      <input type="file" id="jsonFile" accept=".json,application/json" style="display:none" onchange="loadJson(this)"/>
+      <p id="jsonHint" style="font-size:13px">📂 Click to upload your <b>messages.json</b><br><span style="font-size:11px;color:var(--m)">Array of {headline, subtitle} objects</span></p>
+      <div id="jsonLoaded" style="display:none">
+        <div style="font-size:22px;margin-bottom:4px">✅</div>
+        <p id="jsonInfo" style="font-size:13px;color:#4cff91"></p>
+        <p style="font-size:11px;color:var(--m);margin-top:3px">Click to replace</p>
       </div>
     </div>
-    <div class="f"><label>Custom Theme <span style="color:var(--m)">(optional)</span></label>
-      <input type="text" id="theme" placeholder="e.g. never give up, women empowerment, new beginnings..."/>
+    <div class="ibox">
+      No file? The built-in bank of <b>150+ messages</b> will be used automatically.<br>
+      <b>JSON format:</b> <code style="color:var(--a);font-size:11px">[{"headline":"KEEP GOING","subtitle":"Your breakthrough is near."}]</code>
     </div>
   </div>
 
@@ -223,7 +203,26 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
 
 <script>
 const $=id=>document.getElementById(id);
-let logoData=null,results=[];
+let logoData=null,results=[],customTexts=null;
+
+function loadJson(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const parsed=JSON.parse(ev.target.result);
+      if(!Array.isArray(parsed)||!parsed[0]?.headline)throw new Error('Invalid format');
+      customTexts=parsed;
+      $('jsonHint').style.display='none';
+      $('jsonLoaded').style.display='block';
+      $('jsonInfo').textContent=`${parsed.length} messages loaded — "${parsed[0].headline}"...`;
+    }catch(e){
+      alert('❌ Invalid JSON file.\n\nMake sure it\'s an array like:\n[{"headline":"KEEP GOING","subtitle":"Your subtitle here."}]');
+      input.value='';
+    }
+  };
+  r.readAsText(f);
+}
 
 // ── Built-in message bank (fallback when no Gemini key) ────────────────────
 const BANK={
@@ -410,63 +409,13 @@ function getLocalTexts(tone,lang,n){
 }
 
 // ── Gemini API ─────────────────────────────────────────────────────────────
-async function generateWithGroq(apiKey,tone,lang,theme,n){
-  const langNote=lang==='mix'?'Alternate evenly between English and Spanish.':lang==='es'?'Write all text in Spanish.':'Write all text in English.';
-  const themeNote=theme?`Theme focus: "${theme}".`:'';
-  const prompt=`You are a creative copywriter for motivational social media content.
-Generate exactly ${n} unique text pairs for WhatsApp status images.
-Tone: ${tone}. ${themeNote} ${langNote}
-
-Rules:
-- headline: 2-6 words, punchy, ALL CAPS, use ! or ... sparingly
-- subtitle: max 10 words, warm and human, title case
-- Every pair must feel distinct — vary energy, structure, vocabulary
-- No generic clichés. Make them feel real and personal.
-
-Return ONLY a valid JSON array, no markdown, no explanation:
-[{"headline":"...","subtitle":"..."}]`;
-
-  const res=await fetch('https://openrouter.ai/api/v1/chat/completions',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'Authorization':'Bearer '+apiKey,
-      'HTTP-Referer':'https://wa-status-creator.app',
-      'X-Title':'WhatsApp Status Creator'
-    },
-    body:JSON.stringify({
-      model:'meta-llama/llama-3.2-3b-instruct:free',
-      messages:[{role:'user',content:prompt}],
-      max_tokens:2000,
-      temperature:0.9
-    })
-  });
-
-  if(!res.ok){
-    const err=await res.json().catch(()=>({}));
-    const msg=err?.error?.message||`HTTP ${res.status}`;
-    if(res.status===401)throw new Error('Invalid OpenRouter key. Check it at openrouter.ai/keys.');
-    if(res.status===429)throw new Error('Rate limit hit. Wait a moment and retry.');
-    throw new Error(`OpenRouter error: ${msg}`);
+async function generateTexts(tone,lang,theme,n){
+  if(customTexts?.length){
+    const pool=[...customTexts];
+    while(pool.length<n)pool.push(...customTexts);
+    return pool.slice(0,n).map(m=>({headline:m.headline,subtitle:m.subtitle||''}));
   }
-
-  const d=await res.json();
-  const raw=(d?.choices?.[0]?.message?.content||'').replace(/```json|```/g,'').trim();
-  if(!raw)throw new Error('Empty response from AI. Try again.');
-  try{
-    const parsed=JSON.parse(raw);
-    if(!Array.isArray(parsed)||!parsed[0]?.headline)throw new Error('bad format');
-    return parsed.slice(0,n);
-  }catch{throw new Error('Could not parse AI response. Try again.');}
-}
-
-async function generateTexts(groqKey,tone,lang,theme,n){
-  if(!groqKey) return getLocalTexts(tone,lang,n);
-  try{return await generateWithGroq(groqKey,tone,lang,theme,n);}
-  catch(e){
-    showWarn('⚠️ AI failed — using built-in messages instead. Error: '+e.message);
-    return getLocalTexts(tone,lang,n);
-  }
+  return getLocalTexts(tone||'motivational',lang||'en',n);
 }
 
 // ── Source change ──────────────────────────────────────────────────────────
