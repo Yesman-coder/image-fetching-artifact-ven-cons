@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WhatsApp Status Creator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <style>
@@ -11,85 +12,78 @@
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;padding:20px 16px 48px}
 .wrap{max-width:660px;margin:0 auto}
 header{margin-bottom:22px}
-header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 header p{color:var(--m2);font-size:13px;margin-top:4px}
 .card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px 20px;margin-bottom:12px}
-.card-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:14px}
+.ct{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:14px}
 label{display:block;font-size:12px;color:var(--m2);margin-bottom:5px}
 input[type=text],input[type=password],select{width:100%;background:#0a0a0a;border:1px solid var(--b);border-radius:8px;color:var(--t);padding:9px 12px;font-size:13px;outline:none;transition:border-color .2s;font-family:inherit}
 input:focus,select:focus{border-color:var(--a)}
 select option{background:#1a1a1a}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.field{display:flex;flex-direction:column;gap:0}
-.range-wrap{display:flex;align-items:center;gap:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.f{display:flex;flex-direction:column}
+.rw{display:flex;align-items:center;gap:10px}
 input[type=range]{flex:1;accent-color:var(--a);cursor:pointer}
 .rv{font-size:12px;color:var(--a);width:38px;text-align:right;font-weight:600}
-.color-pick{display:flex;align-items:center;gap:8px}
 input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius:6px;cursor:pointer;background:none;padding:2px}
 .logo-zone{border:1.5px dashed var(--b);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
 .logo-zone:hover{border-color:var(--a)}
 .logo-zone img{max-height:48px;max-width:150px;object-fit:contain;display:block;margin:0 auto 6px}
 .logo-zone p{font-size:12px;color:var(--m);line-height:1.5}
-.rm-btn{position:absolute;top:7px;right:8px;background:#ff4444;color:#fff;border:none;border-radius:50%;width:19px;height:19px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.rm-btn{position:absolute;top:7px;right:8px;background:#ff4444;color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:10px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
-.btn-primary{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-dl{background:var(--s2);border:1px solid var(--b);color:var(--t)}
-.btn-dl:hover{border-color:var(--a);color:var(--a)}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.prog-wrap{margin-top:14px}
-.prog-bar{background:var(--b);border-radius:99px;height:5px;overflow:hidden;margin-bottom:10px}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:99px;transition:width .4s;width:0%}
-.step-list{display:flex;flex-direction:column;gap:5px}
+.btn-p{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-s{background:var(--s2);border:1px solid var(--b);color:var(--t)}
+.btn-s:hover{border-color:var(--a);color:var(--a)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pb{background:var(--b);border-radius:99px;height:5px;overflow:hidden;margin-bottom:10px}
+.pf{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:99px;transition:width .4s;width:0%}
+.sl{display:flex;flex-direction:column;gap:6px}
 .step{font-size:12px;color:var(--m);display:flex;align-items:flex-start;gap:7px}
-.step.active{color:var(--t)}
-.step.done{color:#4cff91}
-.step.err{color:#ff6b6b}
+.step.active{color:var(--t)}.step.done{color:#4cff91}.step.err{color:#ff6b6b}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--b);flex-shrink:0;margin-top:4px}
 .step.active .dot{background:var(--a);box-shadow:0 0 6px var(--a)}
-.step.done .dot{background:#4cff91}
-.step.err .dot{background:#ff6b6b}
-.err-box{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.3);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;color:#ff8f8f;line-height:1.6;display:none}
-.err-box strong{color:#ff5555;display:block;margin-bottom:4px}
-.warn-box{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.25);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:#ffc75f;line-height:1.6;display:none}
+.step.done .dot{background:#4cff91}.step.err .dot{background:#ff6b6b}
+.ebox{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.3);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;color:#ff8f8f;line-height:1.6;display:none}
+.ebox strong{color:#ff5555;display:block;margin-bottom:3px}
+.wbox{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.25);border-radius:10px;padding:10px 13px;margin-top:10px;font-size:12px;color:#ffc75f;line-height:1.6;display:none}
+.ibox{background:rgba(124,111,255,.07);border:1px solid rgba(124,111,255,.2);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--m2);line-height:1.6;margin-top:10px}
+.ibox b{color:var(--a)}.ibox a{color:var(--a);text-decoration:none}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:7px;margin-top:16px}
 .thumb{aspect-ratio:9/16;border-radius:7px;overflow:hidden;background:var(--b);position:relative}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb .n{position:absolute;bottom:3px;right:4px;font-size:9px;background:rgba(0,0,0,.7);color:#fff;padding:1px 4px;border-radius:3px}
 .tip{font-size:11px;color:var(--m);margin-top:7px;line-height:1.6}
 .tip a{color:var(--a);text-decoration:none}
-.tip a:hover{text-decoration:underline}
 .sep{height:1px;background:var(--b);margin:13px 0}
-.badge{background:rgba(124,111,255,.15);color:var(--a);font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid rgba(124,111,255,.3)}
-.key-row{display:flex;gap:8px;align-items:flex-end}
-.key-row input{flex:1}
-.key-row .btn{padding:9px 14px;font-size:12px;white-space:nowrap}
-.src-note{font-size:11px;color:var(--m2);margin-top:6px;padding:8px 10px;background:#0a0a0a;border-radius:7px;border:1px solid var(--b)}
+.badge{background:rgba(124,111,255,.15);color:var(--a);font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;border:1px solid rgba(124,111,255,.3)}
+.kr{display:flex;gap:8px;align-items:flex-end}
+.kr input{flex:1}
+.kr .btn{padding:9px 14px;font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>📱 WhatsApp Status Creator <span class="badge">AI-powered</span></h1>
-    <p>AI writes 30 unique messages → royalty-free photos → logo overlay → ZIP download</p>
+    <h1>📱 WhatsApp Status Creator <span class="badge">Gemini AI</span></h1>
+    <p>AI writes unique messages → royalty-free photos → logo overlay → ZIP download</p>
   </header>
 
-  <!-- SOURCE -->
+  <!-- IMAGE SOURCE -->
   <div class="card">
-    <div class="card-title">📡 Image Source</div>
-    <div class="grid2" style="margin-bottom:12px">
-      <div class="field">
-        <label>Source</label>
+    <div class="ct">📡 Image Source</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="f"><label>Source</label>
         <select id="src" onchange="onSrcChange()">
           <option value="pexels">Pexels (API key required)</option>
           <option value="pixabay">Pixabay (API key required)</option>
-          <option value="picsum">Lorem Picsum (no key needed)</option>
+          <option value="picsum">Lorem Picsum (no key needed ✓)</option>
         </select>
       </div>
-      <div class="field">
-        <label>Count</label>
+      <div class="f"><label>Count</label>
         <select id="count">
           <option value="10">10 images</option>
           <option value="20">20 images</option>
@@ -98,37 +92,44 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
       </div>
     </div>
     <div id="keySection">
-      <div class="field" style="margin-bottom:6px">
-        <label>API Key</label>
-        <div class="key-row">
-          <input type="password" id="apiKey" placeholder="Paste your API key here..."/>
-          <button class="btn btn-dl" onclick="testKey()">Test Key</button>
+      <div class="f"><label>Image API Key</label>
+        <div class="kr">
+          <input type="password" id="imgKey" placeholder="Paste your Pexels or Pixabay key..."/>
+          <button class="btn btn-s" onclick="testImgKey()">Test</button>
         </div>
       </div>
-      <div id="keyStatus" style="display:none;font-size:12px;margin-top:5px"></div>
+      <div id="imgKeyStatus" style="display:none;font-size:12px;margin-top:5px"></div>
     </div>
-    <div id="srcNote" class="src-note" style="display:none"></div>
-    <div class="field" style="margin-top:10px">
-      <label>Photo Keyword</label>
-      <input type="text" id="query" placeholder="e.g. sunrise, ocean, mountains, city..."/>
+    <div id="srcNote" class="ibox" style="display:none"></div>
+    <div class="f" style="margin-top:10px"><label>Photo Keyword</label>
+      <input type="text" id="query" placeholder="e.g. sunrise, ocean, mountains, city lights..."/>
     </div>
-    <p class="tip" id="apiTip">Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval, no credit card.</p>
+    <p class="tip" id="imgTip">Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval, no credit card.</p>
   </div>
 
   <!-- AI TEXT -->
   <div class="card">
-    <div class="card-title">✨ AI Message Settings</div>
-    <div class="grid2" style="margin-bottom:12px">
-      <div class="field">
-        <label>Language</label>
+    <div class="ct">✨ AI Text — Gemini</div>
+    <div class="f" style="margin-bottom:12px"><label>Gemini API Key</label>
+      <div class="kr">
+        <input type="password" id="geminiKey" value="AIzaSyBBwtOXdwcnGrVyvEEpm19a_YzkAzI3tKY" placeholder="Paste your Google Gemini API key..."/>
+        <button class="btn btn-s" onclick="testGeminiKey()">Test</button>
+      </div>
+      <div id="geminiKeyStatus" style="display:none;font-size:12px;margin-top:5px"></div>
+    </div>
+    <div class="ibox" style="margin-bottom:12px">
+      <b>Free Gemini key →</b> <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> — takes 30 seconds, no credit card.<br>
+      Leave blank to use the built-in message bank instead.
+    </div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="f"><label>Language</label>
         <select id="lang">
-          <option value="English">English</option>
-          <option value="Spanish">Spanish</option>
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
           <option value="mix">Mix (EN + ES)</option>
         </select>
       </div>
-      <div class="field">
-        <label>Tone</label>
+      <div class="f"><label>Tone</label>
         <select id="tone">
           <option value="motivational">Motivational 🔥</option>
           <option value="peaceful">Peaceful & Calm 🌿</option>
@@ -139,33 +140,29 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
         </select>
       </div>
     </div>
-    <div class="field">
-      <label>Custom Theme <span style="color:var(--m)">(optional)</span></label>
+    <div class="f"><label>Custom Theme <span style="color:var(--m)">(optional)</span></label>
       <input type="text" id="theme" placeholder="e.g. never give up, women empowerment, new beginnings..."/>
     </div>
   </div>
 
-  <!-- VISUAL -->
+  <!-- VISUAL STYLE -->
   <div class="card">
-    <div class="card-title">🎨 Visual Style</div>
-    <div class="grid3" style="margin-bottom:13px">
-      <div class="field">
-        <label>Text Position</label>
+    <div class="ct">🎨 Visual Style</div>
+    <div class="g3" style="margin-bottom:13px">
+      <div class="f"><label>Text Position</label>
         <select id="textPos">
           <option value="center">Center</option>
           <option value="bottom">Bottom</option>
           <option value="top">Top</option>
         </select>
       </div>
-      <div class="field">
-        <label>Text Color</label>
-        <div class="color-pick">
+      <div class="f"><label>Text Color</label>
+        <div style="display:flex;align-items:center;gap:8px">
           <input type="color" id="textColor" value="#ffffff" oninput="$('colorHex').textContent=this.value"/>
           <span style="font-size:12px;color:var(--m2)" id="colorHex">#ffffff</span>
         </div>
       </div>
-      <div class="field">
-        <label>Font Style</label>
+      <div class="f"><label>Font Style</label>
         <select id="fontStyle">
           <option value="bold">Bold</option>
           <option value="normal">Regular</option>
@@ -175,7 +172,7 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
     </div>
     <div class="sep"></div>
     <label style="margin-bottom:8px">Overlay Darkness</label>
-    <div class="range-wrap">
+    <div class="rw">
       <input type="range" id="overlayOp" min="0" max="80" value="48" oninput="$('overlayVal').textContent=this.value+'%'"/>
       <span class="rv" id="overlayVal">48%</span>
     </div>
@@ -183,15 +180,14 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
 
   <!-- LOGO -->
   <div class="card">
-    <div class="card-title">🏷️ Logo (optional)</div>
+    <div class="ct">🏷️ Logo (optional)</div>
     <div id="logoZone" class="logo-zone" onclick="$('logoFile').click()">
       <input type="file" id="logoFile" accept="image/*" style="display:none" onchange="loadLogo(this)"/>
       <img id="logoPreview" style="display:none"/>
       <p id="logoHint">Click to upload logo<br><span style="font-size:11px;color:var(--m)">PNG with transparency works best</span></p>
     </div>
-    <div class="grid2" style="margin-top:12px">
-      <div class="field">
-        <label>Position</label>
+    <div class="g2" style="margin-top:12px">
+      <div class="f"><label>Position</label>
         <select id="logoPos">
           <option value="bottom-center">Bottom Center</option>
           <option value="top-center">Top Center</option>
@@ -201,9 +197,8 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
           <option value="bottom-right">Bottom Right</option>
         </select>
       </div>
-      <div class="field">
-        <label>Size — <span id="logoSzVal" style="color:var(--a)">20%</span></label>
-        <div class="range-wrap" style="margin-top:8px">
+      <div class="f"><label>Size — <span id="logoSzVal" style="color:var(--a)">20%</span></label>
+        <div class="rw" style="margin-top:8px">
           <input type="range" id="logoSize" min="5" max="55" value="20" oninput="$('logoSzVal').textContent=this.value+'%'"/>
         </div>
       </div>
@@ -212,16 +207,16 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
 
   <!-- GENERATE -->
   <div class="card">
-    <div class="actions">
-      <button class="btn btn-primary" id="genBtn" onclick="generate()">⚡ Generate All Images</button>
-      <button class="btn btn-dl" id="dlBtn" style="display:none" onclick="downloadZip()">⬇️ Download ZIP</button>
+    <div class="acts">
+      <button class="btn btn-p" id="genBtn" onclick="generate()">⚡ Generate All Images</button>
+      <button class="btn btn-s" id="dlBtn" style="display:none" onclick="downloadZip()">⬇️ Download ZIP</button>
     </div>
-    <div class="prog-wrap" id="progWrap" style="display:none">
-      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
-      <div class="step-list" id="stepList"></div>
+    <div id="progWrap" style="display:none;margin-top:14px">
+      <div class="pb"><div class="pf" id="progFill"></div></div>
+      <div class="sl" id="stepList"></div>
     </div>
-    <div class="err-box" id="errBox"><strong id="errTitle">Error</strong><span id="errMsg"></span></div>
-    <div class="warn-box" id="warnBox" id="warnMsg"></div>
+    <div class="ebox" id="errBox"><strong id="errTitle"></strong><span id="errMsg"></span></div>
+    <div class="wbox" id="warnBox"></div>
     <div class="grid" id="grid"></div>
   </div>
 </div>
@@ -230,22 +225,254 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
 const $=id=>document.getElementById(id);
 let logoData=null,results=[];
 
-function onSrcChange(){
-  const v=$('src').value;
-  const tips={
-    pexels:'Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval.',
-    pixabay:'Free key at <a href="https://pixabay.com/api/docs/" target="_blank">pixabay.com/api</a> — instant approval.',
-    picsum:''
-  };
-  $('keySection').style.display=v==='picsum'?'none':'block';
-  $('apiTip').innerHTML=tips[v]||'';
-  $('apiTip').style.display=v==='picsum'?'none':'block';
-  const notes={picsum:'✅ No API key needed. Uses Lorem Picsum — high-quality random photos. Your keyword is used for AI text only.'};
-  $('srcNote').style.display=notes[v]?'block':'none';
-  $('srcNote').textContent=notes[v]||'';
-  $('keyStatus').style.display='none';
+// ── Built-in message bank (fallback when no Gemini key) ────────────────────
+const BANK={
+  motivational:{
+    en:[
+      {h:'KEEP GOING',s:'The finish line is closer than you think.'},
+      {h:'RISE AND SHINE',s:'Today belongs to those who show up.'},
+      {h:'NO LIMITS',s:'Break every barrier holding you back.'},
+      {h:'YOU ARE ENOUGH',s:'Stop doubting and start believing.'},
+      {h:'PUSH HARDER',s:'Your future self is counting on you.'},
+      {h:'NEVER SETTLE',s:'You were built for so much more.'},
+      {h:'EARN IT',s:'Nothing worth having comes without effort.'},
+      {h:'STAY THE COURSE',s:'Slow progress is still progress.'},
+      {h:'WAKE UP HUNGRY',s:'The world will not wait for you.'},
+      {h:'SHOW UP',s:'Consistency always beats raw talent.'},
+      {h:'DO IT AFRAID',s:'Courage is moving forward despite the fear.'},
+      {h:'LEVEL UP',s:'Growth starts exactly where comfort ends.'},
+      {h:'MAKE IT HAPPEN',s:'Stop waiting for the perfect moment.'},
+      {h:'BUILD YOUR DREAM',s:"Or someone will hire you to build theirs."},
+      {h:'START NOW',s:'The best time was yesterday. Next best is now.'},
+      {h:'YOU GOT THIS',s:'Believe it before anyone else does.'},
+      {h:'UNSTOPPABLE',s:'Decide today that nothing can hold you back.'},
+      {h:'ONE MORE REP',s:'Champions are built in the moments that hurt.'},
+      {h:'OWN YOUR DAY',s:'How you start sets the tone for everything.'},
+      {h:'KEEP FIGHTING',s:'The hardest battles go to the strongest soldiers.'},
+    ],
+    es:[
+      {h:'SIGUE ADELANTE',s:'La meta está más cerca de lo que imaginas.'},
+      {h:'SIN LÍMITES',s:'Rompe cada barrera que se interpone en tu camino.'},
+      {h:'ERES SUFICIENTE',s:'Deja de dudar y empieza a creer en ti.'},
+      {h:'NO TE RINDAS',s:'Lo mejor de tu historia aún está por escribirse.'},
+      {h:'LEVÁNTATE',s:'El mundo te espera con todo lo que mereces.'},
+      {h:'HOY ES TU DÍA',s:'Aprovecha cada segundo que tienes hoy.'},
+      {h:'MÁS FUERTE',s:'Lo que no te quiebra te hace más poderoso.'},
+      {h:'TÚ PUEDES',s:'El único límite real eres tú mismo.'},
+      {h:'HAZLO HOY',s:'El mañana perfecto nunca llega solo.'},
+      {h:'SIN EXCUSAS',s:'Los campeones se forjan en la disciplina diaria.'},
+      {h:'DA EL PASO',s:'El miedo desaparece cuando empiezas a actuar.'},
+      {h:'IMPARABLE',s:'Decide hoy que nada te va a detener.'},
+      {h:'CONFÍA EN TI',s:'Nadie llegará tan lejos como tú si te lo propones.'},
+      {h:'ARRIBA ESA CABEZA',s:'La vida premia a quienes no se dan por vencidos.'},
+      {h:'TRABAJA DURO',s:'El éxito es la suma de esfuerzos repetidos.'},
+    ]
+  },
+  peaceful:{
+    en:[
+      {h:'BREATHE DEEP',s:'This moment is exactly where you belong.'},
+      {h:'SLOW DOWN',s:'The best things in life are never rushed.'},
+      {h:'LET IT GO',s:'Not everything is yours to carry.'},
+      {h:'FIND YOUR CALM',s:'Stillness is its own kind of strength.'},
+      {h:'REST IS SACRED',s:'You cannot pour from an empty cup.'},
+      {h:'BE HERE NOW',s:'Yesterday is gone and tomorrow is not promised.'},
+      {h:'TRUST THE FLOW',s:'Everything unfolds in its own perfect time.'},
+      {h:'SOFTEN',s:'Life flows better when you stop resisting it.'},
+      {h:'PEACE IS POWER',s:'A calm mind is the greatest weapon you have.'},
+      {h:'EXHALE',s:'Let go of everything that is not serving you.'},
+      {h:'YOU ARE SAFE',s:'Right here, right now, everything is okay.'},
+      {h:'GENTLE DAYS',s:'Not every season is meant for hustle.'},
+    ],
+    es:[
+      {h:'RESPIRA HONDO',s:'Este momento es exactamente donde debes estar.'},
+      {h:'SUELTA',s:'No todo es tuyo para cargar.'},
+      {h:'PAZ INTERIOR',s:'La calma es su propia forma de fortaleza.'},
+      {h:'SÉ PRESENTE',s:'El pasado ya fue y el futuro aún no llega.'},
+      {h:'DESCANSA',s:'No puedes dar lo que no tienes dentro.'},
+      {h:'FLUYE',s:'La vida es más bella cuando dejas de resistirla.'},
+      {h:'AQUÍ Y AHORA',s:'Este momento es todo lo que realmente tienes.'},
+      {h:'CALMA TU MENTE',s:'Una mente tranquila es tu mayor fortaleza.'},
+    ]
+  },
+  faith:{
+    en:[
+      {h:"GOD'S GOT YOU",s:'Trust the plan even when it feels unclear.'},
+      {h:'KEEP THE FAITH',s:"What's meant for you will never pass you by."},
+      {h:'PRAY ANYWAY',s:'Faith does not make it easy — just possible.'},
+      {h:'TRUST HIM',s:'Your story is far from over.'},
+      {h:'STAY ROOTED',s:'A tree with deep roots fears no storm.'},
+      {h:'WALK BY FAITH',s:'Not by sight, but by what you believe.'},
+      {h:'DIVINE TIMING',s:'Your breakthrough is already written.'},
+      {h:'HE SEES YOU',s:'Every tear and every trial has a purpose.'},
+      {h:'BLESSED AND FAVORED',s:'Grace covers every step of your journey.'},
+      {h:'CHOSEN',s:'You were set apart before you were born.'},
+      {h:'FEARLESS IN FAITH',s:'Nothing can touch what God has already protected.'},
+      {h:'ANCHORED',s:'When everything shakes, your faith holds you still.'},
+    ],
+    es:[
+      {h:'DIOS TE CUIDA',s:'Confía en el plan aunque no lo veas claro.'},
+      {h:'FE INQUEBRANTABLE',s:'Lo que es tuyo nunca te va a pasar de largo.'},
+      {h:'ORA Y CONFÍA',s:'La fe no lo hace fácil, solo lo hace posible.'},
+      {h:'TIEMPO DIVINO',s:'Tu milagro ya está escrito en Su libro.'},
+      {h:'ÉL ES FIEL',s:'En su presencia hay alegría completa y paz.'},
+      {h:'PERMANECE FIRME',s:'Un árbol con raíces profundas no teme la tormenta.'},
+      {h:'CAMINA EN FE',s:'No por lo que ves sino por lo que crees.'},
+      {h:'ÉL TE VE',s:'Cada lágrima y cada prueba tiene un propósito.'},
+    ]
+  },
+  hustle:{
+    en:[
+      {h:'OUTWORK EVERYONE',s:'Talent is common — discipline is rare.'},
+      {h:'BUILD IN SILENCE',s:'Let your results make all the noise.'},
+      {h:'NO DAYS OFF',s:'The competition works while you rest.'},
+      {h:'EXECUTE',s:'Ideas are worthless without action behind them.'},
+      {h:'ALL IN',s:'Half effort will only get you half results.'},
+      {h:'STACK YOUR WINS',s:'Small victories compound into empires.'},
+      {h:'STAY FOCUSED',s:'Distractions are just dreams you let die.'},
+      {h:'INVEST IN YOU',s:'Your skills are the asset that never depreciates.'},
+      {h:'OWN THE MORNING',s:'Win the first hour and you own the whole day.'},
+      {h:'THINK BIGGER',s:'Your goals should scare you a little.'},
+      {h:'CLOSE THE TAB',s:'Stop scrolling. Start building what matters.'},
+      {h:'GRIND DIFFERENT',s:'Work smarter and harder than everyone around you.'},
+    ],
+    es:[
+      {h:'TRABAJA MÁS',s:'El talento es común, la disciplina es escasa.'},
+      {h:'CONSTRUYE EN SILENCIO',s:'Deja que tus resultados hablen por ti.'},
+      {h:'TODO O NADA',s:'El esfuerzo a medias da resultados a medias.'},
+      {h:'EJECUTA YA',s:'Las ideas sin acción no valen absolutamente nada.'},
+      {h:'INVIERTE EN TI',s:'Tus habilidades son el activo que nunca pierde valor.'},
+      {h:'SIN DISTRACCIONES',s:'El enfoque es tu arma más poderosa.'},
+      {h:'MADRUGA Y GANA',s:'El que madruga controla su propio destino.'},
+      {h:'PIENSA EN GRANDE',s:'Tus metas deben darte un poco de vértigo.'},
+    ]
+  },
+  'self-love':{
+    en:[
+      {h:'YOU ARE WORTHY',s:'Of every beautiful thing coming your way.'},
+      {h:'CHOOSE YOU',s:'Every single day without apology.'},
+      {h:'HEAL LOUDLY',s:'Your scars are not your shame.'},
+      {h:'SET BOUNDARIES',s:'Protecting your peace is never selfish.'},
+      {h:'LOVE YOURSELF FIRST',s:'Everything else flows from that sacred place.'},
+      {h:'YOU ARE MAGIC',s:'The world needs exactly who you are.'},
+      {h:'GLOW UP',s:'Not for them — for you and only you.'},
+      {h:'RELEASE THE GUILT',s:'You are allowed to be a work in progress.'},
+      {h:'OWN YOUR STORY',s:'Every chapter made you who you are today.'},
+      {h:'SOFT LIFE',s:'You deserve rest, joy, and pure abundance.'},
+      {h:'UNBOTHERED',s:'Your energy is too precious to waste on drama.'},
+      {h:'RADIATE GRACE',s:'You carry a light this world badly needs.'},
+    ],
+    es:[
+      {h:'ERES VALIOSO/A',s:'Mereces todo lo hermoso que está por llegar.'},
+      {h:'ELÍGETE',s:'Cada día, sin disculpas ni explicaciones.'},
+      {h:'SANA SIN VERGÜENZA',s:'Tus cicatrices no son tu historia final.'},
+      {h:'PONLE LÍMITES',s:'Proteger tu paz no es egoísmo, es sabiduría.'},
+      {h:'TE MERECES TODO',s:'El descanso, la alegría y la abundancia plena.'},
+      {h:'ÁMATE PRIMERO',s:'Todo lo demás fluye desde ese lugar sagrado.'},
+      {h:'BRILLA SIN PEDIR PERDÓN',s:'Eres exactamente lo que el mundo necesita.'},
+      {h:'TU ENERGÍA ES SAGRADA',s:'No la desperdicies en quienes no la merecen.'},
+    ]
+  },
+  gratitude:{
+    en:[
+      {h:'COUNT YOUR BLESSINGS',s:'More is coming because you are grateful for now.'},
+      {h:'THANK YOU',s:'Even for the lessons wrapped in disguise.'},
+      {h:'ENOUGH IS NOW',s:'You already have what you need to begin.'},
+      {h:'APPRECIATE TODAY',s:'Tomorrow is not guaranteed for anyone.'},
+      {h:'FULL HEART',s:'When you are grateful, fear has no room.'},
+      {h:"IT'S ALL A GIFT",s:'Even hard days shaped who you are becoming.'},
+      {h:'NOTICE THE BEAUTY',s:'It lives in the ordinary moments you overlook.'},
+      {h:'MORE THAN ENOUGH',s:'Your life is richer than you realize.'},
+      {h:'OVERFLOW',s:'A grateful heart always attracts more to be thankful for.'},
+      {h:'BLESSED BEYOND MEASURE',s:'Look around — your blessings are everywhere.'},
+      {h:'SAVOR THIS MOMENT',s:'You will miss today if you rush past it.'},
+      {h:'HUMBLE AND THANKFUL',s:'The most powerful people are the most grateful.'},
+    ],
+    es:[
+      {h:'CUENTA TUS BENDICIONES',s:'Más viene cuando eres agradecido con lo que hay.'},
+      {h:'GRACIAS',s:'Incluso por las lecciones disfrazadas de obstáculos.'},
+      {h:'ES SUFICIENTE',s:'Ya tienes todo lo que necesitas para empezar.'},
+      {h:'APRECIA EL HOY',s:'El mañana no está garantizado para nadie.'},
+      {h:'CORAZÓN LLENO',s:'Cuando eres agradecido el miedo no tiene lugar.'},
+      {h:'TODO ES UN REGALO',s:'Incluso los días difíciles te formaron de alguna manera.'},
+      {h:'BENDECIDO SIN MEDIDA',s:'Mira a tu alrededor — tus bendiciones están por doquier.'},
+      {h:'HUMILDE Y AGRADECIDO',s:'Las personas más poderosas son las más agradecidas.'},
+    ]
+  }
+};
+
+function getLocalTexts(tone,lang,n){
+  const bank=BANK[tone]||BANK.motivational;
+  let pool=lang==='en'?[...bank.en]:lang==='es'?[...bank.es]:[...bank.en,...bank.es];
+  // shuffle
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  while(pool.length<n)pool=[...pool,...pool];
+  return pool.slice(0,n).map(m=>({headline:m.h,subtitle:m.s}));
 }
 
+// ── Gemini API ─────────────────────────────────────────────────────────────
+async function generateWithGemini(apiKey,tone,lang,theme,n){
+  const langNote=lang==='mix'?'Alternate evenly between English and Spanish.':lang==='es'?'Write all text in Spanish.':'Write all text in English.';
+  const themeNote=theme?`Theme focus: "${theme}".`:'';
+  const prompt=`You are a creative copywriter for motivational social media content.
+Generate exactly ${n} unique text pairs for WhatsApp status images.
+Tone: ${tone}. ${themeNote} ${langNote}
+
+Rules:
+- headline: 2-6 words, punchy, ALL CAPS, use ! or ... sparingly
+- subtitle: max 10 words, warm and human, title case
+- Every pair must feel distinct — vary energy, structure, vocabulary
+- No generic clichés. Make them feel real and personal.
+
+Return ONLY a valid JSON array, no markdown, no explanation:
+[{"headline":"...","subtitle":"..."}]`;
+
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.9,maxOutputTokens:2000}})
+  });
+
+  if(!res.ok){
+    const err=await res.json().catch(()=>({}));
+    const msg=err?.error?.message||`HTTP ${res.status}`;
+    if(res.status===400)throw new Error(`Gemini key error: ${msg}`);
+    if(res.status===429)throw new Error('Gemini rate limit hit. Wait a moment and retry, or leave key blank to use built-in messages.');
+    throw new Error(`Gemini API error: ${msg}`);
+  }
+
+  const d=await res.json();
+  const raw=(d?.candidates?.[0]?.content?.parts?.[0]?.text||'').replace(/```json|```/g,'').trim();
+  if(!raw)throw new Error('Gemini returned an empty response. Try again.');
+  try{
+    const parsed=JSON.parse(raw);
+    if(!Array.isArray(parsed)||!parsed[0]?.headline)throw new Error('bad format');
+    return parsed.slice(0,n);
+  }catch{throw new Error('Could not parse Gemini response. Try again — usually a one-off glitch.');}
+}
+
+async function generateTexts(geminiKey,tone,lang,theme,n){
+  if(!geminiKey) return getLocalTexts(tone,lang,n);
+  try{return await generateWithGemini(geminiKey,tone,lang,theme,n);}
+  catch(e){
+    showWarn('⚠️ Gemini API failed — using built-in messages instead. Error: '+e.message);
+    return getLocalTexts(tone,lang,n);
+  }
+}
+
+// ── Source change ──────────────────────────────────────────────────────────
+function onSrcChange(){
+  const v=$('src').value;
+  $('keySection').style.display=v==='picsum'?'none':'block';
+  $('imgTip').innerHTML=v==='pexels'
+    ?'Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval.'
+    :v==='pixabay'?'Free key at <a href="https://pixabay.com/api/docs/" target="_blank">pixabay.com/api</a> — instant approval.'
+    :'';
+  $('imgTip').style.display=v==='picsum'?'none':'block';
+  $('srcNote').style.display=v==='picsum'?'block':'none';
+  $('srcNote').textContent=v==='picsum'?'✅ No API key needed. High-quality random photos from picsum.photos. Your keyword is used only for the AI message generation.':'';
+}
+
+// ── Logo ───────────────────────────────────────────────────────────────────
 function loadLogo(input){
   const f=input.files[0];if(!f)return;
   const r=new FileReader();
@@ -255,178 +482,105 @@ function loadLogo(input){
     $('logoHint').style.display='none';
     document.querySelectorAll('.rm-btn').forEach(b=>b.remove());
     const rb=document.createElement('button');rb.className='rm-btn';rb.textContent='×';
-    rb.onclick=ev2=>{ev2.stopPropagation();logoData=null;$('logoPreview').style.display='none';$('logoHint').style.display='block';rb.remove();input.value='';};
+    rb.onclick=e=>{e.stopPropagation();logoData=null;$('logoPreview').style.display='none';$('logoHint').style.display='block';rb.remove();input.value='';};
     $('logoZone').appendChild(rb);
   };r.readAsDataURL(f);
 }
 
-// Test API key
-async function testKey(){
-  const src=$('src').value,key=$('apiKey').value.trim();
-  if(!key){showKeyStatus('⚠️ Paste your API key first','#ffc75f');return;}
-  showKeyStatus('Testing...','var(--m2)');
+// ── Test keys ──────────────────────────────────────────────────────────────
+async function testImgKey(){
+  const src=$('src').value,key=$('imgKey').value.trim();
+  if(!key){setKeyStatus('imgKeyStatus','⚠️ Enter a key first','#ffc75f');return;}
+  setKeyStatus('imgKeyStatus','Testing...','var(--m2)');
   try{
     if(src==='pexels'){
-      const r=await fetchWithFallback(`https://api.pexels.com/v1/search?query=test&per_page=1`,{headers:{Authorization:key}});
-      if(r.ok)showKeyStatus('✅ Pexels key is valid!','#4cff91');
-      else if(r.status===401)showKeyStatus('❌ Invalid API key — check pexels.com/api','#ff6b6b');
-      else showKeyStatus(`⚠️ Pexels returned ${r.status}`,'#ffc75f');
-    } else {
-      const r=await fetchWithFallback(`https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=test&per_page=3`);
+      const r=await fetch('https://api.pexels.com/v1/search?query=test&per_page=1',{headers:{Authorization:key}});
+      r.ok?setKeyStatus('imgKeyStatus','✅ Pexels key valid!','#4cff91'):setKeyStatus('imgKeyStatus',r.status===401?'❌ Invalid key':'⚠️ Error '+r.status,'#ff6b6b');
+    }else{
+      const r=await fetch(`https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=test&per_page=3`);
       const d=await r.json();
-      if(d.hits!==undefined)showKeyStatus('✅ Pixabay key is valid!','#4cff91');
-      else showKeyStatus('❌ Invalid Pixabay key','#ff6b6b');
+      d.hits!==undefined?setKeyStatus('imgKeyStatus','✅ Pixabay key valid!','#4cff91'):setKeyStatus('imgKeyStatus','❌ Invalid key','#ff6b6b');
     }
-  }catch(e){showKeyStatus('❌ Could not reach API — '+friendlyNetErr(e),'#ff6b6b');}
+  }catch(e){setKeyStatus('imgKeyStatus','❌ Network error — try Picsum instead','#ff6b6b');}
 }
-function showKeyStatus(msg,color){
-  $('keyStatus').style.display='block';
-  $('keyStatus').style.color=color;
-  $('keyStatus').textContent=msg;
-}
-
-// Friendly network error messages
-function friendlyNetErr(e){
-  const m=(e.message||'').toLowerCase();
-  if(m.includes('failed to fetch')||m.includes('networkerror')||m.includes('cors'))
-    return 'Network/CORS error. The artifact sandbox may be blocking this API. Try Pixabay, or open this in a standalone browser tab.';
-  if(m.includes('timeout')) return 'Request timed out. Check your connection.';
-  return e.message||'Unknown network error';
-}
-
-// Fetch with CORS proxy fallback — no AbortSignal (can't be cloned via postMessage in sandbox)
-function withTimeout(promise, ms, msg){
-  return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg||`Timed out after ${ms/1000}s`)),ms))]);
-}
-async function fetchWithFallback(url, opts={}, timeout=12000){
+async function testGeminiKey(){
+  const key=$('geminiKey').value.trim();
+  if(!key){setKeyStatus('geminiKeyStatus','⚠️ Enter a key first','#ffc75f');return;}
+  setKeyStatus('geminiKeyStatus','Testing...','var(--m2)');
   try{
-    return await withTimeout(fetch(url, opts), timeout, 'Request timed out. Check your connection.');
-  }catch(e){
-    if(e.message.includes('timed out')) throw e;
-    // Try CORS proxy
-    try{
-      const proxied='https://corsproxy.io/?'+encodeURIComponent(url);
-      return await withTimeout(fetch(proxied, opts), timeout, 'Proxy request timed out.');
-    }catch(pe){
-      throw new Error(friendlyNetErr(e));
-    }
-  }
-}
-
-// Fetch images
-async function fetchImages(src,key,q,n){
-  if(src==='picsum'){
-    // Random beautiful photos — no API needed, no CORS issues
-    return Array.from({length:n},(_,i)=>`https://picsum.photos/seed/${encodeURIComponent(q+i)}/1080/1920`);
-  }
-  if(src==='pexels'){
-    const r=await fetchWithFallback(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=${n}&orientation=portrait&size=large`,
-      {headers:{Authorization:key}}
-    );
-    if(r.status===401) throw new Error('Invalid Pexels API key. Double-check at pexels.com/api → "Your API Key".');
-    if(r.status===429) throw new Error('Pexels rate limit reached. Wait 60 seconds and try again.');
-    if(!r.ok) throw new Error(`Pexels returned error ${r.status} ${r.statusText}.`);
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:'Say OK'}]}]})
+    });
     const d=await r.json();
-    if(!d.photos?.length) throw new Error(`No Pexels photos found for "${q}". Try a different keyword (e.g. "nature", "sky", "people").`);
+    if(d?.candidates?.[0])setKeyStatus('geminiKeyStatus','✅ Gemini key valid!','#4cff91');
+    else if(d?.error)setKeyStatus('geminiKeyStatus','❌ '+d.error.message.slice(0,80),'#ff6b6b');
+    else setKeyStatus('geminiKeyStatus','⚠️ Unexpected response','#ffc75f');
+  }catch(e){setKeyStatus('geminiKeyStatus','❌ '+e.message.slice(0,80),'#ff6b6b');}
+}
+function setKeyStatus(id,msg,color){const el=$(id);el.style.display='block';el.style.color=color;el.textContent=msg;}
+
+// ── Fetch images ───────────────────────────────────────────────────────────
+async function fetchImages(src,key,q,n){
+  if(src==='picsum') return Array.from({length:n},(_,i)=>`https://picsum.photos/seed/${encodeURIComponent(q||'photo')+i}/1080/1920`);
+  const fetcher=async url=>{
+    try{return await Promise.race([fetch(url),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),12000))]);}
+    catch{
+      const proxy='https://corsproxy.io/?'+encodeURIComponent(url);
+      return Promise.race([fetch(proxy),new Promise((_,r)=>setTimeout(()=>r(new Error('proxy timeout')),12000))]);
+    }
+  };
+  if(src==='pexels'){
+    const r=await fetcher(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=${n}&orientation=portrait&size=large`,{headers:{Authorization:key}});
+    if(!r.ok){if(r.status===401)throw new Error('Invalid Pexels key — double-check at pexels.com/api.');throw new Error(`Pexels error ${r.status}.`);}
+    const d=await r.json();
+    if(!d.photos?.length)throw new Error(`No Pexels photos for "${q}". Try a simpler keyword or switch to Picsum.`);
     return d.photos.map(p=>p.src.large2x||p.src.large||p.src.medium);
   }
-  if(src==='pixabay'){
-    const r=await fetchWithFallback(
-      `https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=${encodeURIComponent(q)}&image_type=photo&orientation=vertical&per_page=${n}&safesearch=true&min_width=800`
-    );
-    if(!r.ok) throw new Error(`Pixabay returned error ${r.status}. Check your API key.`);
-    const d=await r.json();
-    if(d.error) throw new Error('Pixabay: '+d.error);
-    if(!d.hits?.length) throw new Error(`No Pixabay images for "${q}". Try a simpler keyword.`);
-    return d.hits.map(h=>h.largeImageURL||h.webformatURL);
-  }
+  const r=await fetcher(`https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=${encodeURIComponent(q)}&image_type=photo&orientation=vertical&per_page=${n}&safesearch=true`);
+  if(!r.ok)throw new Error(`Pixabay error ${r.status}.`);
+  const d=await r.json();
+  if(d.error)throw new Error('Pixabay: '+d.error);
+  if(!d.hits?.length)throw new Error(`No Pixabay images for "${q}". Try a simpler keyword or switch to Picsum.`);
+  return d.hits.map(h=>h.largeImageURL||h.webformatURL);
 }
 
-// Claude API — generate texts
-async function generateTexts(tone,lang,theme,n){
-  const langNote=lang==='mix'?'Alternate evenly between English and Spanish.':'Write entirely in '+lang+'.';
-  const themeNote=theme?`Theme focus: "${theme}".`:'';
-  const prompt=`You are a creative copywriter for motivational social media.
-Generate exactly ${n} unique text pairs for WhatsApp status images.
-Tone: ${tone}. ${themeNote} ${langNote}
-
-Rules:
-- headline: 2-6 words, punchy, ALL CAPS, no punctuation except ! or ...
-- subtitle: max 10 words, warm and human, title case, no repetition of headline words
-- Every pair must feel distinct — vary energy, structure, and vocabulary
-- Zero clichés. Make them feel real, not corporate.
-
-Return ONLY a raw JSON array, no markdown fences, no explanation:
-[{"headline":"...","subtitle":"..."}]`;
-
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1800,messages:[{role:'user',content:prompt}]})
-  });
-  if(!res.ok){
-    const errBody=await res.text().catch(()=>'');
-    if(res.status===529) throw new Error('Claude API is overloaded. Wait 30 seconds and retry.');
-    throw new Error(`Claude API error ${res.status}: ${errBody.slice(0,120)}`);
-  }
-  const d=await res.json();
-  const raw=d.content?.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
-  if(!raw) throw new Error('Claude returned an empty response. Try again.');
-  try{
-    const parsed=JSON.parse(raw);
-    if(!Array.isArray(parsed)||!parsed[0]?.headline) throw new Error('Unexpected format');
-    return parsed.slice(0,n);
-  }catch{
-    throw new Error('Could not parse AI response. Try again — usually a one-off glitch.');
-  }
-}
-
-// Text wrap
+// ── Canvas composite ───────────────────────────────────────────────────────
 function wrapText(ctx,text,x,y,maxW,lh){
   const words=text.split(' ');let line='',lines=[];
-  for(const w of words){
-    const t=line?line+' '+w:w;
-    if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;
-  }
+  for(const w of words){const t=line?line+' '+w:w;if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;}
   if(line)lines.push(line);
   const startY=y-((lines.length-1)*lh)/2;
   lines.forEach((l,i)=>ctx.fillText(l,x,startY+i*lh));
   return lines.length*lh;
 }
 
-// Composite
 function composite(url,headline,subtitle,opts){
   return new Promise((res,rej)=>{
-    const W=1080,H=1920;
-    const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+    const W=1080,H=1920,cv=document.createElement('canvas');
+    cv.width=W;cv.height=H;
     const ctx=cv.getContext('2d');
     const img=new Image();img.crossOrigin='anonymous';
-    const timeout=setTimeout(()=>rej(new Error('Image load timeout')),15000);
+    const to=setTimeout(()=>rej(new Error('Image load timeout')),15000);
     img.onload=()=>{
-      clearTimeout(timeout);
+      clearTimeout(to);
       try{
-        const sc=Math.max(W/img.width,H/img.height);
-        const sw=img.width*sc,sh=img.height*sc;
+        const sc=Math.max(W/img.width,H/img.height),sw=img.width*sc,sh=img.height*sc;
         ctx.drawImage(img,(W-sw)/2,(H-sh)/2,sw,sh);
         ctx.fillStyle=`rgba(0,0,0,${opts.overlayOp})`;ctx.fillRect(0,0,W,H);
-        let ty=opts.textPos==='top'?H*.22:opts.textPos==='bottom'?H*.76:H*.5;
+        const ty=opts.textPos==='top'?H*.22:opts.textPos==='bottom'?H*.76:H*.5;
         ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.95)';
         if(headline){
           const fs=96,fw=opts.fontStyle==='bold'?'bold':opts.fontStyle==='italic-bold'?'bold italic':'400';
-          ctx.font=`${fw} ${fs}px Arial,sans-serif`;
-          ctx.fillStyle=opts.textColor;ctx.shadowBlur=30;
+          ctx.font=`${fw} ${fs}px Arial,sans-serif`;ctx.fillStyle=opts.textColor;ctx.shadowBlur=30;
           const hlH=wrapText(ctx,headline,W/2,ty,W-160,fs*1.28);
           if(subtitle){ctx.font=`400 52px Arial,sans-serif`;ctx.shadowBlur=18;wrapText(ctx,subtitle,W/2,ty+hlH/2+56,W-180,66);}
-        } else if(subtitle){
+        }else if(subtitle){
           ctx.font=`400 58px Arial,sans-serif`;ctx.fillStyle=opts.textColor;ctx.shadowBlur=20;
           wrapText(ctx,subtitle,W/2,ty,W-180,72);
         }
         ctx.shadowBlur=0;
-        const finish=()=>{
-          try{res(cv.toDataURL('image/jpeg',.92));}
-          catch(e){rej(new Error('Canvas tainted — image CORS issue: '+e.message));}
-        };
+        const finish=()=>{try{res(cv.toDataURL('image/jpeg',.92));}catch(e){rej(new Error('Canvas export failed: '+e.message));}};
         if(!opts.logo)return finish();
         const li=new Image();
         li.onload=()=>{
@@ -443,68 +597,53 @@ function composite(url,headline,subtitle,opts){
         li.onerror=finish;li.src=opts.logo;
       }catch(e){rej(e);}
     };
-    img.onerror=()=>{clearTimeout(timeout);rej(new Error('Image failed to load from source'));};
+    img.onerror=()=>{clearTimeout(to);rej(new Error('Image failed to load'));};
     img.src=url;
   });
 }
 
-// Steps
+// ── Steps & UI ─────────────────────────────────────────────────────────────
 let steps=[];
-function initSteps(labels){
-  steps=labels.map((l,i)=>({label:l,state:'pending',i}));renderSteps();
-}
-function renderSteps(){
-  $('stepList').innerHTML=steps.map(s=>`<div class="step ${s.state}"><div class="dot"></div><span>${s.label}</span></div>`).join('');
-}
+function initSteps(labels){steps=labels.map((l,i)=>({label:l,state:'pending',i}));renderSteps();}
+function renderSteps(){$('stepList').innerHTML=steps.map(s=>`<div class="step ${s.state}"><div class="dot"></div><span>${s.label}</span></div>`).join('');}
 function setStep(i,state,label){if(steps[i]){steps[i].state=state;if(label)steps[i].label=label;}renderSteps();}
-function setProgress(pct){$('progFill').style.width=pct+'%';}
-function showError(title,msg){
-  $('errBox').style.display='block';$('errTitle').textContent=title;$('errMsg').textContent=msg;
-}
-function clearError(){$('errBox').style.display='none';$('warnBox').style.display='none';}
+function setProgress(p){$('progFill').style.width=p+'%';}
+function showError(title,msg){const e=$('errBox');e.style.display='block';$('errTitle').textContent=title;$('errMsg').textContent=msg;}
+function showWarn(msg){const w=$('warnBox');w.style.display='block';w.textContent=msg;}
+function clearAlerts(){$('errBox').style.display='none';$('warnBox').style.display='none';}
 
+// ── Main generate ──────────────────────────────────────────────────────────
 async function generate(){
-  const src=$('src').value,key=$('apiKey').value.trim(),q=$('query').value.trim();
-  const n=parseInt($('count').value);
+  const src=$('src').value,imgKey=$('imgKey').value.trim(),q=$('query').value.trim();
+  const gemKey=$('geminiKey').value.trim(),n=parseInt($('count').value);
   const tone=$('tone').value,lang=$('lang').value,theme=$('theme').value.trim();
-
-  if(src!=='picsum'&&!key){showError('Missing API Key','Paste your '+src+' API key above.');return;}
-  if(!q){showError('Missing Keyword','Enter a photo search keyword (e.g. "sunrise", "nature").');return;}
-
-  const opts={
-    overlayOp:$('overlayOp').value/100,textColor:$('textColor').value,
-    textPos:$('textPos').value,fontStyle:$('fontStyle').value,
-    logo:logoData,logoPos:$('logoPos').value,logoSize:parseInt($('logoSize').value),
-  };
-
-  $('genBtn').disabled=true;$('dlBtn').style.display='none';
-  $('progWrap').style.display='block';$('grid').innerHTML='';results=[];
-  clearError();
-  initSteps([`✨ Generating ${n} AI messages...`,`📸 Fetching photos (${src})...`,`🎨 Compositing images...`,`📦 Ready`]);
+  if(src!=='picsum'&&!imgKey){showError('Missing Image Key','Add your '+src+' API key above, or switch to Picsum (no key needed).');return;}
+  if(!q){showError('Missing Keyword','Enter a photo search keyword.');return;}
+  const opts={overlayOp:$('overlayOp').value/100,textColor:$('textColor').value,textPos:$('textPos').value,fontStyle:$('fontStyle').value,logo:logoData,logoPos:$('logoPos').value,logoSize:parseInt($('logoSize').value)};
+  $('genBtn').disabled=true;$('dlBtn').style.display='none';$('progWrap').style.display='block';
+  $('grid').innerHTML='';results=[];clearAlerts();
+  initSteps([
+    gemKey?`✨ Generating ${n} messages with Gemini...`:`✨ Loading ${n} messages from built-in bank...`,
+    `📸 Fetching photos (${src})...`,
+    `🎨 Compositing images...`,
+    `📦 Ready to download`,
+  ]);
   setProgress(2);
-
   let texts=[],urls=[];
   try{
-    // Step 1: AI texts
+    // Step 1: Text
     setStep(0,'active');
-    try{texts=await generateTexts(tone,lang,theme,n);}
-    catch(e){setStep(0,'err','✨ AI text failed');throw new Error('AI text generation failed: '+e.message);}
-    setStep(0,'done',`✨ ${texts.length} messages generated`);setProgress(20);
-
+    texts=await generateTexts(gemKey,tone,lang,theme,n);
+    setStep(0,'done',`✨ ${texts.length} messages ready`);setProgress(20);
     // Step 2: Images
     setStep(1,'active');
-    try{urls=await fetchImages(src,key,q,n);}
+    try{urls=await fetchImages(src,imgKey,q,n);}
     catch(e){
-      setStep(1,'err','📸 Image fetch failed');
-      // Suggest picsum fallback
-      if(src!=='picsum'&&(e.message.includes('CORS')||e.message.includes('Network')||e.message.includes('network'))){
-        $('warnBox').style.display='block';
-        $('warnBox').textContent='💡 Tip: Switch Image Source to "Lorem Picsum (no key needed)" to bypass this network restriction — it uses high-quality random photos and always works in the sandbox.';
-      }
-      throw new Error('Photo fetch failed: '+e.message);
+      setStep(1,'err','📸 Photo fetch failed');
+      if(src!=='picsum')showWarn('💡 Switch Image Source to "Lorem Picsum (no key needed)" to bypass network restrictions and always get photos.');
+      throw new Error('Photo fetch: '+e.message);
     }
-    setStep(1,'done',`📸 ${urls.length} photos fetched`);setProgress(35);
-
+    setStep(1,'done',`📸 ${urls.length} photos ready`);setProgress(35);
     // Step 3: Composite
     setStep(2,'active');
     const total=Math.min(urls.length,texts.length,n);
@@ -519,23 +658,21 @@ async function generate(){
         const im=document.createElement('img');im.src=dataUrl;
         const ix=document.createElement('div');ix.className='n';ix.textContent=i+1;
         d.appendChild(im);d.appendChild(ix);$('grid').appendChild(d);
-      }catch(imgErr){skipped++;console.warn(`Image ${i+1} skipped:`,imgErr.message);}
+      }catch(e){skipped++;console.warn(`Skip ${i+1}:`,e.message);}
     }
-    if(!results.length) throw new Error(`All ${total} composites failed. This usually means the photos could not be drawn to canvas due to CORS. Switch to Picsum source.`);
-    if(skipped>0){
-      $('warnBox').style.display='block';
-      $('warnBox').textContent=`⚠️ ${skipped} image(s) were skipped due to load errors. ${results.length} succeeded.`;
-    }
-    setStep(2,'done',`🎨 ${results.length} images done`);
-    setStep(3,'done',`✅ ${results.length} images ready — download below`);
+    if(!results.length)throw new Error(`All composites failed. Switch Image Source to Picsum and try again.`);
+    if(skipped)showWarn(`⚠️ ${skipped} image(s) skipped due to CORS or load errors. ${results.length} succeeded.`);
+    setStep(2,'done',`🎨 ${results.length} images composited`);
+    setStep(3,'done',`✅ Done! ${results.length} images ready`);
     setProgress(100);$('dlBtn').style.display='inline-flex';
   }catch(e){
     showError('Something went wrong',e.message);
     const ai=steps.findIndex(s=>s.state==='active');
-    if(ai>=0)setStep(ai,'err',steps[ai].label.replace(/^[^\s]+/,'❌'));
+    if(ai>=0)setStep(ai,'err',steps[ai].label);
   }finally{$('genBtn').disabled=false;}
 }
 
+// ── Download ZIP ───────────────────────────────────────────────────────────
 async function downloadZip(){
   if(!results.length)return;
   $('dlBtn').disabled=true;
