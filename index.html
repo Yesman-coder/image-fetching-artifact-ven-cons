@@ -182,6 +182,9 @@ input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius
       <div class="f"><label>Count</label>
         <select id="count"><option value="1">1 image (test)</option><option value="5">5 images (test)</option><option value="10">10 images</option><option value="20">20 images</option><option value="30" selected>30 images</option></select>
       </div>
+      <div class="f"><label>Starting Month</label>
+        <select id="startMonth"></select>
+      </div>
     </div>
     <div class="acts">
       <button class="btn btn-p" id="genBtn" onclick="generate()">⚡ Generate Images</button>
@@ -209,7 +212,20 @@ const $=id=>document.getElementById(id);
 let logoData=null,customTexts=null,uploadedPhotos=[],results=[];
 let steps=[],timerInt=null,t0=0,srcMode='picsum';
 
-// ── Tab ────────────────────────────────────────────────────────────────────
+// ── Populate month dropdown ────────────────────────────────────────────────
+(function buildMonthDropdown(){
+  const sel=$('startMonth');
+  const now=new Date();
+  for(let m=0;m<18;m++){
+    const d=new Date(now.getFullYear(),now.getMonth()+m,1);
+    const val=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const lbl=d.toLocaleString('default',{month:'long',year:'numeric'});
+    const opt=document.createElement('option');
+    opt.value=val;opt.textContent=lbl;
+    if(m===1)opt.selected=true; // default = next month
+    sel.appendChild(opt);
+  }
+})();
 function setTab(t){
   srcMode=t;
   ['picsum','pexels','upload'].forEach(k=>{
@@ -586,7 +602,8 @@ async function downloadZip(){
   $('dlBtn').disabled=true;
   try{
     const zip=new JSZip(),f=zip.folder('whatsapp_statuses');
-    results.forEach((d,i)=>f.file(`status_${String(i+1).padStart(2,'0')}.jpg`,d.split(',')[1],{base64:true}));
+    const filenames=getDateFilenames(results.length);
+    results.forEach((d,i)=>f.file(filenames[i],d.split(',')[1],{base64:true}));
     const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:4}});
     saveAs(blob,'whatsapp_statuses.zip');
   }catch(e){showErr('ZIP Failed',e.message);}
