@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d0d;--s:#161616;--s2:#1e1e1e;--b:#272727;--a:#7c6fff;--a2:#ff6b9d;--t:#f0f0f0;--m:#666;--m2:#999}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;padding:20px 16px 48px}
+.wrap{max-width:660px;margin:0 auto}
+header{margin-bottom:22px}
+header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+header p{color:var(--m2);font-size:13px;margin-top:4px}
+.card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:14px}
+label{display:block;font-size:12px;color:var(--m2);margin-bottom:5px}
+input[type=text],input[type=password],select{width:100%;background:#0a0a0a;border:1px solid var(--b);border-radius:8px;color:var(--t);padding:9px 12px;font-size:13px;outline:none;transition:border-color .2s;font-family:inherit}
+input:focus,select:focus{border-color:var(--a)}
+select option{background:#1a1a1a}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:0}
+.range-wrap{display:flex;align-items:center;gap:10px}
+input[type=range]{flex:1;accent-color:var(--a);cursor:pointer}
+.rv{font-size:12px;color:var(--a);width:38px;text-align:right;font-weight:600}
+.color-pick{display:flex;align-items:center;gap:8px}
+input[type=color]{width:36px;height:34px;border:1px solid var(--b);border-radius:6px;cursor:pointer;background:none;padding:2px}
+.logo-zone{border:1.5px dashed var(--b);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.logo-zone:hover{border-color:var(--a)}
+.logo-zone img{max-height:48px;max-width:150px;object-fit:contain;display:block;margin:0 auto 6px}
+.logo-zone p{font-size:12px;color:var(--m);line-height:1.5}
+.rm-btn{position:absolute;top:7px;right:8px;background:#ff4444;color:#fff;border:none;border-radius:50%;width:19px;height:19px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:10px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--a),var(--a2));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-dl{background:var(--s2);border:1px solid var(--b);color:var(--t)}
+.btn-dl:hover{border-color:var(--a);color:var(--a)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.prog-wrap{margin-top:14px}
+.prog-bar{background:var(--b);border-radius:99px;height:5px;overflow:hidden;margin-bottom:10px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--a),var(--a2));border-radius:99px;transition:width .4s;width:0%}
+.step-list{display:flex;flex-direction:column;gap:5px}
+.step{font-size:12px;color:var(--m);display:flex;align-items:flex-start;gap:7px}
+.step.active{color:var(--t)}
+.step.done{color:#4cff91}
+.step.err{color:#ff6b6b}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--b);flex-shrink:0;margin-top:4px}
+.step.active .dot{background:var(--a);box-shadow:0 0 6px var(--a)}
+.step.done .dot{background:#4cff91}
+.step.err .dot{background:#ff6b6b}
+.err-box{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.3);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:12px;color:#ff8f8f;line-height:1.6;display:none}
+.err-box strong{color:#ff5555;display:block;margin-bottom:4px}
+.warn-box{background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.25);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12px;color:#ffc75f;line-height:1.6;display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:7px;margin-top:16px}
+.thumb{aspect-ratio:9/16;border-radius:7px;overflow:hidden;background:var(--b);position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .n{position:absolute;bottom:3px;right:4px;font-size:9px;background:rgba(0,0,0,.7);color:#fff;padding:1px 4px;border-radius:3px}
+.tip{font-size:11px;color:var(--m);margin-top:7px;line-height:1.6}
+.tip a{color:var(--a);text-decoration:none}
+.tip a:hover{text-decoration:underline}
+.sep{height:1px;background:var(--b);margin:13px 0}
+.badge{background:rgba(124,111,255,.15);color:var(--a);font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid rgba(124,111,255,.3)}
+.key-row{display:flex;gap:8px;align-items:flex-end}
+.key-row input{flex:1}
+.key-row .btn{padding:9px 14px;font-size:12px;white-space:nowrap}
+.src-note{font-size:11px;color:var(--m2);margin-top:6px;padding:8px 10px;background:#0a0a0a;border-radius:7px;border:1px solid var(--b)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📱 WhatsApp Status Creator <span class="badge">AI-powered</span></h1>
+    <p>AI writes 30 unique messages → royalty-free photos → logo overlay → ZIP download</p>
+  </header>
+
+  <!-- SOURCE -->
+  <div class="card">
+    <div class="card-title">📡 Image Source</div>
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="field">
+        <label>Source</label>
+        <select id="src" onchange="onSrcChange()">
+          <option value="pexels">Pexels (API key required)</option>
+          <option value="pixabay">Pixabay (API key required)</option>
+          <option value="picsum">Lorem Picsum (no key needed)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Count</label>
+        <select id="count">
+          <option value="10">10 images</option>
+          <option value="20">20 images</option>
+          <option value="30" selected>30 images</option>
+        </select>
+      </div>
+    </div>
+    <div id="keySection">
+      <div class="field" style="margin-bottom:6px">
+        <label>API Key</label>
+        <div class="key-row">
+          <input type="password" id="apiKey" placeholder="Paste your API key here..."/>
+          <button class="btn btn-dl" onclick="testKey()">Test Key</button>
+        </div>
+      </div>
+      <div id="keyStatus" style="display:none;font-size:12px;margin-top:5px"></div>
+    </div>
+    <div id="srcNote" class="src-note" style="display:none"></div>
+    <div class="field" style="margin-top:10px">
+      <label>Photo Keyword</label>
+      <input type="text" id="query" placeholder="e.g. sunrise, ocean, mountains, city..."/>
+    </div>
+    <p class="tip" id="apiTip">Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval, no credit card.</p>
+  </div>
+
+  <!-- AI TEXT -->
+  <div class="card">
+    <div class="card-title">✨ AI Message Settings</div>
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="field">
+        <label>Language</label>
+        <select id="lang">
+          <option value="English">English</option>
+          <option value="Spanish">Spanish</option>
+          <option value="mix">Mix (EN + ES)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tone</label>
+        <select id="tone">
+          <option value="motivational">Motivational 🔥</option>
+          <option value="peaceful">Peaceful & Calm 🌿</option>
+          <option value="faith">Faith & Spiritual 🙏</option>
+          <option value="hustle">Hustle & Grind 💼</option>
+          <option value="self-love">Self-Love 💜</option>
+          <option value="gratitude">Gratitude 🌟</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Custom Theme <span style="color:var(--m)">(optional)</span></label>
+      <input type="text" id="theme" placeholder="e.g. never give up, women empowerment, new beginnings..."/>
+    </div>
+  </div>
+
+  <!-- VISUAL -->
+  <div class="card">
+    <div class="card-title">🎨 Visual Style</div>
+    <div class="grid3" style="margin-bottom:13px">
+      <div class="field">
+        <label>Text Position</label>
+        <select id="textPos">
+          <option value="center">Center</option>
+          <option value="bottom">Bottom</option>
+          <option value="top">Top</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Text Color</label>
+        <div class="color-pick">
+          <input type="color" id="textColor" value="#ffffff" oninput="$('colorHex').textContent=this.value"/>
+          <span style="font-size:12px;color:var(--m2)" id="colorHex">#ffffff</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Font Style</label>
+        <select id="fontStyle">
+          <option value="bold">Bold</option>
+          <option value="normal">Regular</option>
+          <option value="italic-bold">Bold Italic</option>
+        </select>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <label style="margin-bottom:8px">Overlay Darkness</label>
+    <div class="range-wrap">
+      <input type="range" id="overlayOp" min="0" max="80" value="48" oninput="$('overlayVal').textContent=this.value+'%'"/>
+      <span class="rv" id="overlayVal">48%</span>
+    </div>
+  </div>
+
+  <!-- LOGO -->
+  <div class="card">
+    <div class="card-title">🏷️ Logo (optional)</div>
+    <div id="logoZone" class="logo-zone" onclick="$('logoFile').click()">
+      <input type="file" id="logoFile" accept="image/*" style="display:none" onchange="loadLogo(this)"/>
+      <img id="logoPreview" style="display:none"/>
+      <p id="logoHint">Click to upload logo<br><span style="font-size:11px;color:var(--m)">PNG with transparency works best</span></p>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="field">
+        <label>Position</label>
+        <select id="logoPos">
+          <option value="bottom-center">Bottom Center</option>
+          <option value="top-center">Top Center</option>
+          <option value="top-left">Top Left</option>
+          <option value="top-right">Top Right</option>
+          <option value="bottom-left">Bottom Left</option>
+          <option value="bottom-right">Bottom Right</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Size — <span id="logoSzVal" style="color:var(--a)">20%</span></label>
+        <div class="range-wrap" style="margin-top:8px">
+          <input type="range" id="logoSize" min="5" max="55" value="20" oninput="$('logoSzVal').textContent=this.value+'%'"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <div class="card">
+    <div class="actions">
+      <button class="btn btn-primary" id="genBtn" onclick="generate()">⚡ Generate All Images</button>
+      <button class="btn btn-dl" id="dlBtn" style="display:none" onclick="downloadZip()">⬇️ Download ZIP</button>
+    </div>
+    <div class="prog-wrap" id="progWrap" style="display:none">
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="step-list" id="stepList"></div>
+    </div>
+    <div class="err-box" id="errBox"><strong id="errTitle">Error</strong><span id="errMsg"></span></div>
+    <div class="warn-box" id="warnBox" id="warnMsg"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let logoData=null,results=[];
+
+function onSrcChange(){
+  const v=$('src').value;
+  const tips={
+    pexels:'Free key at <a href="https://www.pexels.com/api/" target="_blank">pexels.com/api</a> — instant approval.',
+    pixabay:'Free key at <a href="https://pixabay.com/api/docs/" target="_blank">pixabay.com/api</a> — instant approval.',
+    picsum:''
+  };
+  $('keySection').style.display=v==='picsum'?'none':'block';
+  $('apiTip').innerHTML=tips[v]||'';
+  $('apiTip').style.display=v==='picsum'?'none':'block';
+  const notes={picsum:'✅ No API key needed. Uses Lorem Picsum — high-quality random photos. Your keyword is used for AI text only.'};
+  $('srcNote').style.display=notes[v]?'block':'none';
+  $('srcNote').textContent=notes[v]||'';
+  $('keyStatus').style.display='none';
+}
+
+function loadLogo(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    logoData=ev.target.result;
+    $('logoPreview').src=logoData;$('logoPreview').style.display='block';
+    $('logoHint').style.display='none';
+    document.querySelectorAll('.rm-btn').forEach(b=>b.remove());
+    const rb=document.createElement('button');rb.className='rm-btn';rb.textContent='×';
+    rb.onclick=ev2=>{ev2.stopPropagation();logoData=null;$('logoPreview').style.display='none';$('logoHint').style.display='block';rb.remove();input.value='';};
+    $('logoZone').appendChild(rb);
+  };r.readAsDataURL(f);
+}
+
+// Test API key
+async function testKey(){
+  const src=$('src').value,key=$('apiKey').value.trim();
+  if(!key){showKeyStatus('⚠️ Paste your API key first','#ffc75f');return;}
+  showKeyStatus('Testing...','var(--m2)');
+  try{
+    if(src==='pexels'){
+      const r=await fetchWithFallback(`https://api.pexels.com/v1/search?query=test&per_page=1`,{headers:{Authorization:key}});
+      if(r.ok)showKeyStatus('✅ Pexels key is valid!','#4cff91');
+      else if(r.status===401)showKeyStatus('❌ Invalid API key — check pexels.com/api','#ff6b6b');
+      else showKeyStatus(`⚠️ Pexels returned ${r.status}`,'#ffc75f');
+    } else {
+      const r=await fetchWithFallback(`https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=test&per_page=3`);
+      const d=await r.json();
+      if(d.hits!==undefined)showKeyStatus('✅ Pixabay key is valid!','#4cff91');
+      else showKeyStatus('❌ Invalid Pixabay key','#ff6b6b');
+    }
+  }catch(e){showKeyStatus('❌ Could not reach API — '+friendlyNetErr(e),'#ff6b6b');}
+}
+function showKeyStatus(msg,color){
+  $('keyStatus').style.display='block';
+  $('keyStatus').style.color=color;
+  $('keyStatus').textContent=msg;
+}
+
+// Friendly network error messages
+function friendlyNetErr(e){
+  const m=(e.message||'').toLowerCase();
+  if(m.includes('failed to fetch')||m.includes('networkerror')||m.includes('cors'))
+    return 'Network/CORS error. The artifact sandbox may be blocking this API. Try Pixabay, or open this in a standalone browser tab.';
+  if(m.includes('timeout')) return 'Request timed out. Check your connection.';
+  return e.message||'Unknown network error';
+}
+
+// Fetch with CORS proxy fallback — no AbortSignal (can't be cloned via postMessage in sandbox)
+function withTimeout(promise, ms, msg){
+  return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error(msg||`Timed out after ${ms/1000}s`)),ms))]);
+}
+async function fetchWithFallback(url, opts={}, timeout=12000){
+  try{
+    return await withTimeout(fetch(url, opts), timeout, 'Request timed out. Check your connection.');
+  }catch(e){
+    if(e.message.includes('timed out')) throw e;
+    // Try CORS proxy
+    try{
+      const proxied='https://corsproxy.io/?'+encodeURIComponent(url);
+      return await withTimeout(fetch(proxied, opts), timeout, 'Proxy request timed out.');
+    }catch(pe){
+      throw new Error(friendlyNetErr(e));
+    }
+  }
+}
+
+// Fetch images
+async function fetchImages(src,key,q,n){
+  if(src==='picsum'){
+    // Random beautiful photos — no API needed, no CORS issues
+    return Array.from({length:n},(_,i)=>`https://picsum.photos/seed/${encodeURIComponent(q+i)}/1080/1920`);
+  }
+  if(src==='pexels'){
+    const r=await fetchWithFallback(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=${n}&orientation=portrait&size=large`,
+      {headers:{Authorization:key}}
+    );
+    if(r.status===401) throw new Error('Invalid Pexels API key. Double-check at pexels.com/api → "Your API Key".');
+    if(r.status===429) throw new Error('Pexels rate limit reached. Wait 60 seconds and try again.');
+    if(!r.ok) throw new Error(`Pexels returned error ${r.status} ${r.statusText}.`);
+    const d=await r.json();
+    if(!d.photos?.length) throw new Error(`No Pexels photos found for "${q}". Try a different keyword (e.g. "nature", "sky", "people").`);
+    return d.photos.map(p=>p.src.large2x||p.src.large||p.src.medium);
+  }
+  if(src==='pixabay'){
+    const r=await fetchWithFallback(
+      `https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=${encodeURIComponent(q)}&image_type=photo&orientation=vertical&per_page=${n}&safesearch=true&min_width=800`
+    );
+    if(!r.ok) throw new Error(`Pixabay returned error ${r.status}. Check your API key.`);
+    const d=await r.json();
+    if(d.error) throw new Error('Pixabay: '+d.error);
+    if(!d.hits?.length) throw new Error(`No Pixabay images for "${q}". Try a simpler keyword.`);
+    return d.hits.map(h=>h.largeImageURL||h.webformatURL);
+  }
+}
+
+// Claude API — generate texts
+async function generateTexts(tone,lang,theme,n){
+  const langNote=lang==='mix'?'Alternate evenly between English and Spanish.':'Write entirely in '+lang+'.';
+  const themeNote=theme?`Theme focus: "${theme}".`:'';
+  const prompt=`You are a creative copywriter for motivational social media.
+Generate exactly ${n} unique text pairs for WhatsApp status images.
+Tone: ${tone}. ${themeNote} ${langNote}
+
+Rules:
+- headline: 2-6 words, punchy, ALL CAPS, no punctuation except ! or ...
+- subtitle: max 10 words, warm and human, title case, no repetition of headline words
+- Every pair must feel distinct — vary energy, structure, and vocabulary
+- Zero clichés. Make them feel real, not corporate.
+
+Return ONLY a raw JSON array, no markdown fences, no explanation:
+[{"headline":"...","subtitle":"..."}]`;
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1800,messages:[{role:'user',content:prompt}]})
+  });
+  if(!res.ok){
+    const errBody=await res.text().catch(()=>'');
+    if(res.status===529) throw new Error('Claude API is overloaded. Wait 30 seconds and retry.');
+    throw new Error(`Claude API error ${res.status}: ${errBody.slice(0,120)}`);
+  }
+  const d=await res.json();
+  const raw=d.content?.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  if(!raw) throw new Error('Claude returned an empty response. Try again.');
+  try{
+    const parsed=JSON.parse(raw);
+    if(!Array.isArray(parsed)||!parsed[0]?.headline) throw new Error('Unexpected format');
+    return parsed.slice(0,n);
+  }catch{
+    throw new Error('Could not parse AI response. Try again — usually a one-off glitch.');
+  }
+}
+
+// Text wrap
+function wrapText(ctx,text,x,y,maxW,lh){
+  const words=text.split(' ');let line='',lines=[];
+  for(const w of words){
+    const t=line?line+' '+w:w;
+    if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;
+  }
+  if(line)lines.push(line);
+  const startY=y-((lines.length-1)*lh)/2;
+  lines.forEach((l,i)=>ctx.fillText(l,x,startY+i*lh));
+  return lines.length*lh;
+}
+
+// Composite
+function composite(url,headline,subtitle,opts){
+  return new Promise((res,rej)=>{
+    const W=1080,H=1920;
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+    const ctx=cv.getContext('2d');
+    const img=new Image();img.crossOrigin='anonymous';
+    const timeout=setTimeout(()=>rej(new Error('Image load timeout')),15000);
+    img.onload=()=>{
+      clearTimeout(timeout);
+      try{
+        const sc=Math.max(W/img.width,H/img.height);
+        const sw=img.width*sc,sh=img.height*sc;
+        ctx.drawImage(img,(W-sw)/2,(H-sh)/2,sw,sh);
+        ctx.fillStyle=`rgba(0,0,0,${opts.overlayOp})`;ctx.fillRect(0,0,W,H);
+        let ty=opts.textPos==='top'?H*.22:opts.textPos==='bottom'?H*.76:H*.5;
+        ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.95)';
+        if(headline){
+          const fs=96,fw=opts.fontStyle==='bold'?'bold':opts.fontStyle==='italic-bold'?'bold italic':'400';
+          ctx.font=`${fw} ${fs}px Arial,sans-serif`;
+          ctx.fillStyle=opts.textColor;ctx.shadowBlur=30;
+          const hlH=wrapText(ctx,headline,W/2,ty,W-160,fs*1.28);
+          if(subtitle){ctx.font=`400 52px Arial,sans-serif`;ctx.shadowBlur=18;wrapText(ctx,subtitle,W/2,ty+hlH/2+56,W-180,66);}
+        } else if(subtitle){
+          ctx.font=`400 58px Arial,sans-serif`;ctx.fillStyle=opts.textColor;ctx.shadowBlur=20;
+          wrapText(ctx,subtitle,W/2,ty,W-180,72);
+        }
+        ctx.shadowBlur=0;
+        const finish=()=>{
+          try{res(cv.toDataURL('image/jpeg',.92));}
+          catch(e){rej(new Error('Canvas tainted — image CORS issue: '+e.message));}
+        };
+        if(!opts.logo)return finish();
+        const li=new Image();
+        li.onload=()=>{
+          const lw=W*(opts.logoSize/100),lh2=(li.height/li.width)*lw,pad=90;
+          let lx,ly;
+          switch(opts.logoPos){
+            case'top-center':lx=W/2-lw/2;ly=pad;break;case'top-left':lx=pad;ly=pad;break;
+            case'top-right':lx=W-lw-pad;ly=pad;break;case'bottom-left':lx=pad;ly=H-lh2-pad;break;
+            case'bottom-right':lx=W-lw-pad;ly=H-lh2-pad;break;
+            default:lx=W/2-lw/2;ly=H-lh2-pad;
+          }
+          ctx.drawImage(li,lx,ly,lw,lh2);finish();
+        };
+        li.onerror=finish;li.src=opts.logo;
+      }catch(e){rej(e);}
+    };
+    img.onerror=()=>{clearTimeout(timeout);rej(new Error('Image failed to load from source'));};
+    img.src=url;
+  });
+}
+
+// Steps
+let steps=[];
+function initSteps(labels){
+  steps=labels.map((l,i)=>({label:l,state:'pending',i}));renderSteps();
+}
+function renderSteps(){
+  $('stepList').innerHTML=steps.map(s=>`<div class="step ${s.state}"><div class="dot"></div><span>${s.label}</span></div>`).join('');
+}
+function setStep(i,state,label){if(steps[i]){steps[i].state=state;if(label)steps[i].label=label;}renderSteps();}
+function setProgress(pct){$('progFill').style.width=pct+'%';}
+function showError(title,msg){
+  $('errBox').style.display='block';$('errTitle').textContent=title;$('errMsg').textContent=msg;
+}
+function clearError(){$('errBox').style.display='none';$('warnBox').style.display='none';}
+
+async function generate(){
+  const src=$('src').value,key=$('apiKey').value.trim(),q=$('query').value.trim();
+  const n=parseInt($('count').value);
+  const tone=$('tone').value,lang=$('lang').value,theme=$('theme').value.trim();
+
+  if(src!=='picsum'&&!key){showError('Missing API Key','Paste your '+src+' API key above.');return;}
+  if(!q){showError('Missing Keyword','Enter a photo search keyword (e.g. "sunrise", "nature").');return;}
+
+  const opts={
+    overlayOp:$('overlayOp').value/100,textColor:$('textColor').value,
+    textPos:$('textPos').value,fontStyle:$('fontStyle').value,
+    logo:logoData,logoPos:$('logoPos').value,logoSize:parseInt($('logoSize').value),
+  };
+
+  $('genBtn').disabled=true;$('dlBtn').style.display='none';
+  $('progWrap').style.display='block';$('grid').innerHTML='';results=[];
+  clearError();
+  initSteps([`✨ Generating ${n} AI messages...`,`📸 Fetching photos (${src})...`,`🎨 Compositing images...`,`📦 Ready`]);
+  setProgress(2);
+
+  let texts=[],urls=[];
+  try{
+    // Step 1: AI texts
+    setStep(0,'active');
+    try{texts=await generateTexts(tone,lang,theme,n);}
+    catch(e){setStep(0,'err','✨ AI text failed');throw new Error('AI text generation failed: '+e.message);}
+    setStep(0,'done',`✨ ${texts.length} messages generated`);setProgress(20);
+
+    // Step 2: Images
+    setStep(1,'active');
+    try{urls=await fetchImages(src,key,q,n);}
+    catch(e){
+      setStep(1,'err','📸 Image fetch failed');
+      // Suggest picsum fallback
+      if(src!=='picsum'&&(e.message.includes('CORS')||e.message.includes('Network')||e.message.includes('network'))){
+        $('warnBox').style.display='block';
+        $('warnBox').textContent='💡 Tip: Switch Image Source to "Lorem Picsum (no key needed)" to bypass this network restriction — it uses high-quality random photos and always works in the sandbox.';
+      }
+      throw new Error('Photo fetch failed: '+e.message);
+    }
+    setStep(1,'done',`📸 ${urls.length} photos fetched`);setProgress(35);
+
+    // Step 3: Composite
+    setStep(2,'active');
+    const total=Math.min(urls.length,texts.length,n);
+    let skipped=0;
+    for(let i=0;i<total;i++){
+      setStep(2,'active',`🎨 Compositing ${i+1} of ${total}...`);
+      setProgress(35+Math.round((i/total)*57));
+      try{
+        const dataUrl=await composite(urls[i],texts[i]?.headline||'',texts[i]?.subtitle||'',opts);
+        results.push(dataUrl);
+        const d=document.createElement('div');d.className='thumb';
+        const im=document.createElement('img');im.src=dataUrl;
+        const ix=document.createElement('div');ix.className='n';ix.textContent=i+1;
+        d.appendChild(im);d.appendChild(ix);$('grid').appendChild(d);
+      }catch(imgErr){skipped++;console.warn(`Image ${i+1} skipped:`,imgErr.message);}
+    }
+    if(!results.length) throw new Error(`All ${total} composites failed. This usually means the photos could not be drawn to canvas due to CORS. Switch to Picsum source.`);
+    if(skipped>0){
+      $('warnBox').style.display='block';
+      $('warnBox').textContent=`⚠️ ${skipped} image(s) were skipped due to load errors. ${results.length} succeeded.`;
+    }
+    setStep(2,'done',`🎨 ${results.length} images done`);
+    setStep(3,'done',`✅ ${results.length} images ready — download below`);
+    setProgress(100);$('dlBtn').style.display='inline-flex';
+  }catch(e){
+    showError('Something went wrong',e.message);
+    const ai=steps.findIndex(s=>s.state==='active');
+    if(ai>=0)setStep(ai,'err',steps[ai].label.replace(/^[^\s]+/,'❌'));
+  }finally{$('genBtn').disabled=false;}
+}
+
+async function downloadZip(){
+  if(!results.length)return;
+  $('dlBtn').disabled=true;
+  try{
+    const zip=new JSZip(),folder=zip.folder('whatsapp_statuses');
+    results.forEach((d,i)=>folder.file(`status_${String(i+1).padStart(2,'0')}.jpg`,d.split(',')[1],{base64:true}));
+    const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+    saveAs(blob,`wa_statuses_${($('query').value||'batch').replace(/\s+/g,'_')}.zip`);
+  }catch(e){showError('ZIP failed',e.message);}
+  finally{$('dlBtn').disabled=false;}
+}
+</script>
+</body>
+</html>
