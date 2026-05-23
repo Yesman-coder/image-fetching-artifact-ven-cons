@@ -434,7 +434,7 @@ function compositeOnCanvas(bgSrc,isObjectUrl,headline,subtitle,opts,fallbackIdx)
         const fs=96,fw=opts.fontStyle==='bold'?'bold':opts.fontStyle==='italic-bold'?'bold italic':'400';
         ctx.font=`${fw} ${fs}px Arial,sans-serif`;ctx.fillStyle=opts.textColor;ctx.shadowBlur=30;
         const hlH=wrapText(ctx,headline,W/2,ty,W-160,fs*1.28);
-        if(subtitle){ctx.font=`400 52px Arial,sans-serif`;ctx.shadowBlur=18;wrapText(ctx,subtitle,W/2,ty+hlH/2+56,W-180,66);}
+        if(subtitle){ctx.font=`400 52px Arial,sans-serif`;ctx.shadowBlur=18;wrapText(ctx,subtitle,W/2,ty+hlH/2+120,W-180,70);}
       }else if(subtitle){
         ctx.font=`400 58px Arial,sans-serif`;ctx.fillStyle=opts.textColor;ctx.shadowBlur=20;
         wrapText(ctx,subtitle,W/2,ty,W-180,72);
