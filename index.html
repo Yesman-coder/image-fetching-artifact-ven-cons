@@ -598,14 +598,25 @@ async function generate(){
 async function downloadZip(){
   if(!results.length)return;
   $('dlBtn').disabled=true;
+  $('dlBtn').textContent='⏳ Zipping...';
   try{
-    const zip=new JSZip(),f=zip.folder('whatsapp_statuses');
-    const filenames=getDateFilenames(results.length);
-    results.forEach((d,i)=>f.file(filenames[i],d.split(',')[1],{base64:true}));
-    const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:4}});
+    const zip=new JSZip();
+    const monthVal=$('startMonth').value||'2026-01';
+    const [yr,mo]=monthVal.split('-').map(Number);
+    for(let i=0;i<results.length;i++){
+      const dt=new Date(yr,mo-1,1+i);
+      const name=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}.jpg`;
+      zip.file(name,results[i].split(',')[1],{base64:true});
+    }
+    // STORE = no recompression (JPEGs are already compressed — DEFLATE just hangs)
+    const blob=await zip.generateAsync({type:'blob',compression:'STORE'});
     saveAs(blob,'whatsapp_statuses.zip');
-  }catch(e){showErr('ZIP Failed',e.message);}
-  finally{$('dlBtn').disabled=false;}
+  }catch(e){
+    showErr('ZIP Failed',e.message);
+  }finally{
+    $('dlBtn').disabled=false;
+    $('dlBtn').textContent='⬇️ Download ZIP';
+  }
 }
 </script>
 </body>
